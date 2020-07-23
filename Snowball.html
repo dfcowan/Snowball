@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Snowball</title>
+</head>
+<body>
+    <div id="app">
+        <p>Monthly Budget: <input v-model="monthlyBudget"> {{ monthlyBudget | formatDollar }}</p>
+
+        <table>
+            <th>
+                <tr>
+                    <td >Name</td>
+                    <td align="right">Balance</td>
+                    <td align="right">Rate</td>
+                    <td align="right">Minimum<br>Payment</td>
+                </tr>
+            </th>
+            <tr v-for="account in sortedAccounts">
+                <td><input v-model="account.name"></td>
+                <td align="right">{{account.balance | formatDollar }} </td>
+                <td align="right">{{account.interestRate | formatPercentage}}</td>
+                <td align="right">{{account.minimumPayment | formatDollar}}</td>
+            </tr>
+        </table>
+<br>
+            <table>
+                <tr>
+                    <td></td>
+                    <td
+                        style="text-align: right; padding-left: 10px;"
+                        v-for="account in sortedAccounts">
+                        <span style="font-size: x-small;">{{ account.name }}</span><br>
+                        {{ account.balance | formatDollar }}
+                    </td>
+                </tr>
+                <tr v-for="(month, i) in simulatedAmortization">
+                    <td style="text-align: right; padding-left: 10px;">{{ i+1 }}</td>
+                    <td v-if="account.payment < 0"
+                        :title="account.name"
+                        style="text-align: right; padding-left: 10px;"
+                        v-for="account in month.simulatedAccounts">
+                            <span style="font-size: x-small;">{{ account.name }}</span><br>
+                            {{ account.interest | formatDollar }}<br>
+                            {{ account.payment | formatDollar }}<br>
+                            {{ account.balance | formatDollar }}
+                    </td>
+                    <td v-else></td>
+                    <td style="text-align: right; padding-left: 10px; background-color: darkgray;">{{ month.totalBalance | formatDollar }}</td>
+                    <td style="text-align: right; padding-left: 10px; background-color: greenyellow;">{{ month.snowballPayment | formatDollar }}</td>
+                </tr>
+            </table>
+
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="Snowball.js"></script>
+</body>
+</html>
