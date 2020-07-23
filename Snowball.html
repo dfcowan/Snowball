@@ -5,7 +5,7 @@
 </head>
 <body>
     <div id="app">
-        <p>Monthly Budget: <input v-model="monthlyBudget"> {{ monthlyBudget | formatDollar }}</p>
+        <p>Monthly Budget: <input type="number" v-model="monthlyBudget"> {{ monthlyBudget | formatDollar }}</p>
 
         <table>
             <th>
@@ -16,13 +16,26 @@
                     <td align="right">Minimum<br>Payment</td>
                 </tr>
             </th>
-            <tr v-for="account in sortedAccounts">
+            <tr v-for="account in accounts">
                 <td><input v-model="account.name"></td>
-                <td align="right">{{account.balance | formatDollar }} </td>
-                <td align="right">{{account.interestRate | formatPercentage}}</td>
-                <td align="right">{{account.minimumPayment | formatDollar}}</td>
+                <td align="right">
+                    <input type="number" v-model="account.balance"><br>
+                    {{account.balance | formatDollar }}
+                </td>
+                <td align="right">
+                    <input type="number" v-model="account.interestRate"><br>
+                    {{account.interestRate | formatPercentage}}
+                </td>
+                <td align="right">
+                    <input type="number" v-model="account.minimumPayment"><br>
+                    {{account.minimumPayment | formatDollar}}
+                </td>
+                <td>
+                    <button v-on:click="removeAccount(account.id)">Remove</button>
+                </td>
             </tr>
         </table>
+        <button v-on:click="addAccount">Add New Account</button>
 <br>
             <table>
                 <tr>
@@ -33,10 +46,16 @@
                         <span style="font-size: x-small;">{{ account.name }}</span><br>
                         {{ account.balance | formatDollar }}
                     </td>
+                    <td style="text-align: right; padding-left: 10px;">
+                        Total Balance
+                    </td>
+                    <td style="text-align: right; padding-left: 10px;">
+                        Snowball Payment
+                    </td>
                 </tr>
                 <tr v-for="(month, i) in simulatedAmortization">
                     <td style="text-align: right; padding-left: 10px;">{{ i+1 }}</td>
-                    <td v-if="account.payment < 0"
+                    <td v-if="account.payment < 0 || account.balance > 0"
                         :title="account.name"
                         style="text-align: right; padding-left: 10px;"
                         v-for="account in month.simulatedAccounts">

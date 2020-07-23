@@ -10,28 +10,63 @@ function periodForAccount(a, p) {
     return x;
 }
 
+function uuidv4() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+}
+
+let monthlyBudget = 1000.0;
+let accounts = [{
+    id: uuidv4(),
+    name: "Example",
+    balance: 2209.0,
+    interestRate: 0.2524,
+    minimumPayment: 37.0
+}];
+
+function loadFromLocalStorage() {
+    let mb = parseFloat(localStorage.getItem('monthlyBudget'));
+    if (mb) {
+        monthlyBudget = mb;
+    }
+    let ajs = JSON.parse(localStorage.getItem('accounts'));
+    if (ajs) {
+        accounts = ajs;
+    }
+}
+
+loadFromLocalStorage();
+
 var model = new Vue({
     el: '#app',
     data: {
-        monthlyBudget: 100,
-        accounts: [
-            {
-                name: "Example",
-                balance: 2209,
-                interestRate: 0.2524,
-                minimumPayment: 37
-            }
-        ]
+        monthlyBudget: monthlyBudget,
+        accounts: accounts
     },
     filters: {
         formatPercentage: function (p) {
-            return (p * 100).toFixed(2) + '%';
+            return (parseFloat(p) * 100).toFixed(2) + '%';
         },
         formatDollar: function (d) {
-            return d.toLocaleString('en-US', {
+            return parseFloat(d).toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'USD',
             });
+        }
+    },
+    methods: {
+        addAccount: function () {
+            this.accounts.push({
+                id: uuidv4(),
+                name: "New Account",
+                balance: 0.0,
+                interestRate: 0.0,
+                minimumPayment: 0.0
+            });
+        },
+        removeAccount: function (id) {
+            this.accounts = this.accounts.filter(a => a.id != id);
         }
     },
     computed: {
@@ -39,6 +74,28 @@ var model = new Vue({
             return this.accounts.sort(function (a, b) { return b.balance - a.balance });
         },
         simulatedAmortization: function () {
+            if (typeof this.monthlyBudget != "number") {
+                this.monthlyBudget = parseFloat(this.monthlyBudget);
+            }
+            this.accounts.forEach(function (a) {
+                if (typeof a.balance != "number") {
+                    a.balance = parseFloat(a.balance);
+                }
+                if (typeof a.interestRate != "number") {
+                    a.interestRate = parseFloat(a.interestRate);
+                }
+                if (typeof a.minimumPayment != "number") {
+                    a.minimumPayment = parseFloat(a.minimumPayment);
+                }
+            });
+
+            localStorage.setItem('monthlyBudget', this.monthlyBudget);
+            localStorage.setItem('accounts', JSON.stringify(this.accounts));
+
+            if (this.monthlyBudget < this.accounts.reduce(function (t, a) { return t + a.minimumPayment }, 0)) {
+                return [];
+            }
+
             let nextMonth = [];
             for (let i = 0; i < this.accounts.length; i++){
                 nextMonth.push({
@@ -49,7 +106,7 @@ var model = new Vue({
 
             let months = [];
             let totalBalance = nextMonth.reduce(function (t, a) { return t + a.balance },0);
-            while (totalBalance > 0) {
+            while (totalBalance > 0 && months.length < 1200) {
                 let monthlyAccounts = [];
                 let snowballPayment = this.monthlyBudget;
 
@@ -96,3 +153,4 @@ var model = new Vue({
         }
     }
 });
+
