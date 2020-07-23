@@ -71,7 +71,7 @@ var model = new Vue({
     },
     computed: {
         sortedAccounts: function () {
-            return this.accounts.sort(function (a, b) { return b.balance - a.balance });
+            return Array.from(this.accounts).sort(function (a, b) { return b.balance - a.balance });
         },
         simulatedAmortization: function () {
             if (typeof this.monthlyBudget != "number") {
