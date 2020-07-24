@@ -73,6 +73,9 @@ var model = new Vue({
         sortedAccounts: function () {
             return Array.from(this.accounts).sort(function (a, b) { return b.balance - a.balance });
         },
+        totalBalance: function () {
+            return this.accounts.reduce(function (t, a) { return t + a.balance }, 0);
+        },
         simulatedAmortization: function () {
             if (typeof this.monthlyBudget != "number") {
                 this.monthlyBudget = parseFloat(this.monthlyBudget);
@@ -143,8 +146,9 @@ var model = new Vue({
                 totalBalance = monthlyAccounts.reduce(function (t, a) { return t + a.balance }, 0);
                 months.push({
                     simulatedAccounts: monthlyAccounts,
-                    totalBalance: totalBalance,
-                    snowballPayment: snowballSave
+                    totalInterest: monthlyAccounts.reduce(function (t, a) { return t + a.interest }, 0),
+                    totalPayment: monthlyAccounts.reduce(function (t, a) { return t + a.payment }, 0),
+                    totalBalance: totalBalance
                 });
 
                 nextMonth = monthlyAccounts.sort(function (a, b) { return b.balance - a.balance });
@@ -153,4 +157,3 @@ var model = new Vue({
         }
     }
 });
-

@@ -19,15 +19,15 @@
             <tr v-for="account in accounts">
                 <td><input v-model="account.name"></td>
                 <td align="right">
-                    <input type="number" v-model="account.balance"><br>
+                    <input type="number" step="any" v-model="account.balance"><br>
                     {{account.balance | formatDollar }}
                 </td>
                 <td align="right">
-                    <input type="number" v-model="account.interestRate"><br>
+                    <input type="number" step="any" v-model="account.interestRate"><br>
                     {{account.interestRate | formatPercentage}}
                 </td>
                 <td align="right">
-                    <input type="number" v-model="account.minimumPayment"><br>
+                    <input type="number" step="any" v-model="account.minimumPayment"><br>
                     {{account.minimumPayment | formatDollar}}
                 </td>
                 <td>
@@ -46,11 +46,10 @@
                         <span style="font-size: x-small;">{{ account.name }}</span><br>
                         {{ account.balance | formatDollar }}
                     </td>
-                    <td style="text-align: right; padding-left: 10px;">
-                        Total Balance
-                    </td>
-                    <td style="text-align: right; padding-left: 10px;">
-                        Snowball Payment
+                    <td
+                        style="text-align: right; padding-left: 10px;">
+                        <span style="font-size: x-small;">Total</span><br>
+                        {{ totalBalance | formatDollar }}
                     </td>
                 </tr>
                 <tr v-for="(month, i) in simulatedAmortization">
@@ -65,8 +64,12 @@
                             {{ account.balance | formatDollar }}
                     </td>
                     <td v-else></td>
-                    <td style="text-align: right; padding-left: 10px; background-color: darkgray;">{{ month.totalBalance | formatDollar }}</td>
-                    <td style="text-align: right; padding-left: 10px; background-color: greenyellow;">{{ month.snowballPayment | formatDollar }}</td>
+                    <td style="text-align: right; padding-left: 10px; background-color: darkgray;">
+                        <span style="font-size: x-small;">Total</span><br>
+                        {{ month.totalInterest | formatDollar }}<br>
+                        {{ month.totalPayment | formatDollar }}<br>
+                        {{ month.totalBalance | formatDollar }}
+                    </td>
                 </tr>
             </table>
 
