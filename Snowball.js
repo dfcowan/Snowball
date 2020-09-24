@@ -21,8 +21,12 @@ let accounts = [{
     id: uuidv4(),
     name: "Example",
     balance: 2209.0,
+    inputBalance: "2209.0",
     interestRate: 0.2524,
-    minimumPayment: 37.0
+    inputInterestRate: "25.25%",
+    minimumPayment: 37.0,
+    inputMinimumPayment: "37.0",
+    backgroundColor: "#FFFFFF"
 }];
 
 function loadFromLocalStorage() {
@@ -34,6 +38,20 @@ function loadFromLocalStorage() {
     if (ajs) {
         accounts = ajs;
     }
+    accounts.forEach(function (a) {
+        if (!a.inputBalance && a.balance) {
+            a.inputBalance = a.balance
+        }
+        if (!a.inputInterestRate && a.interestRate) {
+            a.inputInterestRate = a.interestRate
+        }
+        if (!a.inputMinimumPayment && a.minimumPayment) {
+            a.inputMinimumPayment = a.minimumPayment
+        }
+        if (!a.backgroundColor) {
+            a.backgroundColor = "#FFFFFF"
+        }
+    });
 }
 
 loadFromLocalStorage();
@@ -60,9 +78,13 @@ var model = new Vue({
             this.accounts.push({
                 id: uuidv4(),
                 name: "New Account",
-                balance: 0.0,
-                interestRate: 0.0,
-                minimumPayment: 0.0
+                balance: 0,
+                inputBalance: "0.0",
+                inputInterestRate: "0.0",
+                interestRate: 0,
+                inputMinimumPayment: "0.0",
+                minimumPayment: 0,
+                backgroundColor: "#FFFFFF"
             });
         },
         removeAccount: function (id) {
@@ -76,20 +98,20 @@ var model = new Vue({
         totalBalance: function () {
             return this.accounts.reduce(function (t, a) { return t + a.balance }, 0);
         },
+        totalMinimumPayments: function () {
+            return this.accounts.reduce(function (t, a) { return t + a.minimumPayment }, 0);
+        },
+        monthlySnowballPayment: function () {
+            return this.monthlyBudget - this.totalMinimumPayments;
+        },
         simulatedAmortization: function () {
             if (typeof this.monthlyBudget != "number") {
                 this.monthlyBudget = parseFloat(this.monthlyBudget);
             }
             this.accounts.forEach(function (a) {
-                if (typeof a.balance != "number") {
-                    a.balance = parseFloat(a.balance);
-                }
-                if (typeof a.interestRate != "number") {
-                    a.interestRate = parseFloat(a.interestRate);
-                }
-                if (typeof a.minimumPayment != "number") {
-                    a.minimumPayment = parseFloat(a.minimumPayment);
-                }
+                a.balance = parseFloat(a.inputBalance);
+                a.interestRate = parseFloat(a.inputInterestRate) / 100;
+                a.minimumPayment = parseFloat(a.inputMinimumPayment);
             });
 
             localStorage.setItem('monthlyBudget', this.monthlyBudget);

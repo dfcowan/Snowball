@@ -1,34 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snowball</title>
 </head>
 <body>
+    <p>Accounts</p>
     <div id="app">
-        <p>Monthly Budget: <input type="number" v-model="monthlyBudget"> {{ monthlyBudget | formatDollar }}</p>
-
         <table>
             <th>
                 <tr>
-                    <td >Name</td>
-                    <td align="right">Balance</td>
-                    <td align="right">Rate</td>
-                    <td align="right">Minimum<br>Payment</td>
+                    <td style="vertical-align: bottom;">Name</td>
+                    <td style="vertical-align: bottom;">Balance</td>
+                    <td style="vertical-align: bottom;">Interest<br>Rate</td>
+                    <td style="vertical-align: bottom;">Minimum<br>Payment</td>
+                    <td style="vertical-align: bottom;">Color</td>
                 </tr>
             </th>
             <tr v-for="account in accounts">
                 <td><input v-model="account.name"></td>
-                <td align="right">
-                    <input type="number" step="any" v-model="account.balance"><br>
-                    {{account.balance | formatDollar }}
+                <td>
+                    <input type="number" step="any" v-model="account.inputBalance" style="width: 75px;"><br>
                 </td>
-                <td align="right">
-                    <input type="number" step="any" v-model="account.interestRate"><br>
-                    {{account.interestRate | formatPercentage}}
+                <td>
+                    <input type="number" step="any" v-model="account.inputInterestRate" style="width: 75px;"><br>
                 </td>
-                <td align="right">
-                    <input type="number" step="any" v-model="account.minimumPayment"><br>
-                    {{account.minimumPayment | formatDollar}}
+                <td>
+                    <input type="number" step="any" v-model="account.inputMinimumPayment" style="width: 75px;"><br>
+                </td>
+                <td>
+                    <input type="color" v-model="account.backgroundColor">
                 </td>
                 <td>
                     <button v-on:click="removeAccount(account.id)">Remove</button>
@@ -36,12 +37,41 @@
             </tr>
         </table>
         <button v-on:click="addAccount">Add New Account</button>
-<br>
+
+        <table style="margin:25px;">
+            <tr>
+                <td>
+                    Monthly Budget:
+                </td>
+                <td>
+                    <input type="number" v-model="monthlyBudget" style="width: 75px;">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    - Total Minimum Payments:
+                </td>
+                <td>
+                    {{ totalMinimumPayments | formatDollar }}
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    = Snowball Payment:
+                </td>
+                <td>
+                    {{ monthlySnowballPayment | formatDollar }}
+                </td>
+            </tr>
+        </table>
+
+        <br>
             <table>
                 <tr>
                     <td></td>
                     <td
-                        style="text-align: right; padding-left: 10px;"
+                        :style="'text-align: right; padding-left: 10px; background-color:' + account.backgroundColor + ';'"
                         v-for="account in sortedAccounts">
                         <span style="font-size: x-small;">{{ account.name }}</span><br>
                         {{ account.balance | formatDollar }}
@@ -56,7 +86,7 @@
                     <td style="text-align: right; padding-left: 10px;">{{ i+1 }}</td>
                     <td v-if="account.payment < 0 || account.balance > 0"
                         :title="account.name"
-                        style="text-align: right; padding-left: 10px;"
+                        :style="'text-align: right; padding-left: 10px; background-color:' + account.backgroundColor + ';'"
                         v-for="account in month.simulatedAccounts">
                             <span style="font-size: x-small;">{{ account.name }}</span><br>
                             {{ account.interest | formatDollar }}<br>
