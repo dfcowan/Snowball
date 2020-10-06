@@ -93,7 +93,7 @@ var model = new Vue({
     },
     computed: {
         sortedAccounts: function () {
-            return Array.from(this.accounts).sort(function (a, b) { return b.balance - a.balance });
+            return Array.from(this.accounts).sort(function (a, b) { return a.balance - b.balance });
         },
         totalBalance: function () {
             return this.accounts.reduce(function (t, a) { return t + a.balance }, 0);
@@ -127,7 +127,7 @@ var model = new Vue({
                     ...this.accounts[i]
                 });
             }
-            nextMonth = nextMonth.sort(function (a, b) { return b.balance - a.balance });
+            nextMonth.sort(function (a, b) { return b.balance - a.balance });
 
             let months = [];
             let totalBalance = nextMonth.reduce(function (t, a) { return t + a.balance },0);
@@ -135,7 +135,7 @@ var model = new Vue({
                 let monthlyAccounts = [];
                 let snowballPayment = this.monthlyBudget;
 
-                for (let i = 0; i < nextMonth.length; i++){
+                for (let i = 0; i < nextMonth.length; i++) {
                     let payment =  nextMonth[i].minimumPayment;
                     if (nextMonth[i].balance < payment)                    {
                         payment = nextMonth[i].balance;
@@ -145,7 +145,6 @@ var model = new Vue({
                     monthlyAccounts.push(periodForAccount(nextMonth[i], payment));
                 }
 
-                let snowballSave = snowballPayment;
                 if (snowballPayment > 0 && monthlyAccounts.filter(a => a.balance > 0).length > 0) {
                     let i = monthlyAccounts.length - 1;
                     while(i >= 0 && snowballPayment > 0){
@@ -167,7 +166,7 @@ var model = new Vue({
 
                 totalBalance = monthlyAccounts.reduce(function (t, a) { return t + a.balance }, 0);
                 months.push({
-                    simulatedAccounts: monthlyAccounts,
+                    simulatedAccounts: Array.from(monthlyAccounts).sort(function (a, b) { if (a.balance !== b.balance) { return a.balance - b.balance } return b.payment - a.payment }),
                     totalInterest: monthlyAccounts.reduce(function (t, a) { return t + a.interest }, 0),
                     totalPayment: monthlyAccounts.reduce(function (t, a) { return t + a.payment }, 0),
                     totalBalance: totalBalance
