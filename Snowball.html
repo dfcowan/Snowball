@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Debt Snowball Calculator</title>
 </head>
-<body>
+<body style="font-family: sans-serif">
     <h1>Debt Snowball Calculator</h1>
     <h2>Accounts</h2>
     <div id="app">
@@ -76,22 +76,21 @@
         </h3>
             <table>
                 <tr>
-                    <td
-                        style="text-align: right; padding-left: 10px; background-color: darkgray;">
-                        <span style="font-size: x-small;">Total</span><br>
+                    <td style="text-align: right;">
+                        <u style="font-size:large;">Total</u><br>
                         {{ totalBalance | formatDollar }}
                     </td>
                     <td
                         :style="'text-align: right; padding-left: 10px; background-color:' + account.backgroundColor + ';'"
                         v-for="account in sortedAccounts">
-                        <span style="font-size: x-small;">{{ account.name }}</span><br>
+                        <u style="font-size: large;">{{ account.name }}</u><br>
                         {{ account.balance | formatDollar }}
                     </td>
 
                 </tr>
                 <tr v-for="(month, i) in simulatedAmortization">
                     <td style="text-align: right; padding-left: 10px; white-space: nowrap; background-color: darkgray;">
-                        <span style="font-size: x-small;">Month {{ i + 1 }}</span><br>
+                        <u style="font-size: large;">Month {{ i + 1 }}</u><br>
                         {{ month.totalInterest | formatDollar }}<br>
                         {{ month.totalPayment | formatDollar }}<br>
                         {{ month.totalBalance | formatDollar }}
@@ -100,7 +99,7 @@
                         :title="account.name"
                         :style="'text-align: right; padding-left: 10px; white-space: nowrap; background-color:' + account.backgroundColor + ';'"
                         v-for="account in month.simulatedAccounts">
-                            <span style="font-size: x-small;">{{ account.name }}</span><br>
+                            <u style="font-size: large;">{{ account.name }}</u><br>
                             {{ account.interest | formatDollar }}<br>
                             {{ account.payment | formatDollar }}<br>
                             {{ account.balance | formatDollar }}
