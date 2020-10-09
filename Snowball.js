@@ -4,9 +4,7 @@ function periodForAccount(a, p) {
     x.balance += x.interest;
     x.payment = -1*p;
     x.balance -= p;
-    x.balance *= 100;
-    x.balance = Math.round(x.balance);
-    x.balance /= 100;
+    x.balance = roundToPenny(x.balance);
     return x;
 }
 
@@ -16,7 +14,12 @@ function uuidv4() {
   );
 }
 
-let monthlyBudget = 1000.0;
+function roundToPenny(x) {
+    return Math.round(x * 100) / 100;
+}
+
+let monthlyBudget = 1000;
+let inputMonthlyBudget = "1000.0";
 let accounts = [{
     id: uuidv4(),
     name: "Example",
@@ -30,9 +33,9 @@ let accounts = [{
 }];
 
 function loadFromLocalStorage() {
-    let mb = parseFloat(localStorage.getItem('monthlyBudget'));
+    let mb = parseFloat(localStorage.getItem('inputMonthlyBudget'));
     if (mb) {
-        monthlyBudget = mb;
+        inputMonthlyBudget = mb;
     }
     let ajs = JSON.parse(localStorage.getItem('accounts'));
     if (ajs) {
@@ -60,6 +63,7 @@ var model = new Vue({
     el: '#app',
     data: {
         monthlyBudget: monthlyBudget,
+        inputMonthlyBudget: inputMonthlyBudget,
         accounts: accounts
     },
     filters: {
@@ -92,32 +96,64 @@ var model = new Vue({
         }
     },
     computed: {
+        durationDescription: function () {
+            let months = this.simulatedAmortization.length;
+            if (months === 0) {
+                return "";
+            }
+
+            let desc = "";
+            if (months < 12) {
+                desc = months + " months ";
+            }
+            let years = Math.floor(months / 12);
+            let remMonths = months % 12;
+            if (remMonths === 0)            {
+                desc = months + " months (" + years + " years) ";
+            }
+            else {
+                desc = months + " months (" + years + " years and " + remMonths + " months) ";
+            }
+
+            return "It will take approximately " + desc + " to payoff all your debt.";
+        },
+        totalInterest: function () {
+            return this.simulatedAmortization.reduce(function (t, m) { return t + m.totalInterest }, 0);
+        },
+        totalPaid: function () {
+            return -1 * this.simulatedAmortization.reduce(function (t, m) { return t + m.totalPayment }, 0);
+        },
+        budgetError: function () {
+            if (!this.monthlySnowballPayment || this.monthlySnowballPayment < 0) {
+                return "Your minimum payments exceed your budget";
+            }
+
+            return "";
+        },
         sortedAccounts: function () {
             return Array.from(this.accounts).sort(function (a, b) { return a.balance - b.balance });
         },
         totalBalance: function () {
-            return this.accounts.reduce(function (t, a) { return t + a.balance }, 0);
+            return roundToPenny(this.accounts.reduce(function (t, a) { return t + a.balance }, 0));
         },
         totalMinimumPayments: function () {
-            return this.accounts.reduce(function (t, a) { return t + a.minimumPayment }, 0);
+            return roundToPenny(this.accounts.reduce(function (t, a) { return t + a.minimumPayment }, 0));
         },
         monthlySnowballPayment: function () {
             return this.monthlyBudget - this.totalMinimumPayments;
         },
         simulatedAmortization: function () {
-            if (typeof this.monthlyBudget != "number") {
-                this.monthlyBudget = parseFloat(this.monthlyBudget);
-            }
+            this.monthlyBudget = roundToPenny(parseFloat(this.inputMonthlyBudget));
             this.accounts.forEach(function (a) {
-                a.balance = parseFloat(a.inputBalance);
+                a.balance = roundToPenny(parseFloat(a.inputBalance));
                 a.interestRate = parseFloat(a.inputInterestRate) / 100;
-                a.minimumPayment = parseFloat(a.inputMinimumPayment);
+                a.minimumPayment = roundToPenny(parseFloat(a.inputMinimumPayment));
             });
 
-            localStorage.setItem('monthlyBudget', this.monthlyBudget);
+            localStorage.setItem('inputMonthlyBudget', this.inputMonthlyBudget);
             localStorage.setItem('accounts', JSON.stringify(this.accounts));
 
-            if (this.monthlyBudget < this.accounts.reduce(function (t, a) { return t + a.minimumPayment }, 0)) {
+            if (this.monthlyBudget < this.totalMinimumPayments) {
                 return [];
             }
 

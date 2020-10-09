@@ -2,10 +2,11 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snowball</title>
+    <title>Debt Snowball Calculator</title>
 </head>
 <body>
-    <p>Accounts</p>
+    <h1>Debt Snowball Calculator</h1>
+    <h2>Accounts</h2>
     <div id="app">
         <table>
             <th>
@@ -38,13 +39,15 @@
         </table>
         <button v-on:click="addAccount">Add New Account</button>
 
-        <table style="margin:25px;">
+        <h2>Budget</h2>
+        <table>
             <tr>
                 <td>
                     Monthly Budget:
                 </td>
                 <td>
-                    <input type="number" v-model="monthlyBudget" style="width: 75px;">
+                    <input type="number" v-model="inputMonthlyBudget" style="width: 75px;">
+                    <span style="color: red;">{{ budgetError }}</span>
                 </td>
             </tr>
             <tr>
@@ -66,40 +69,44 @@
             </tr>
         </table>
 
-        <br>
+        <h2>Plan</h2>
+        <h3>
+            {{ durationDescription }}<br>
+            You will pay {{ totalPaid | formatDollar }} including {{ totalInterest | formatDollar }} of interest.
+        </h3>
             <table>
                 <tr>
-                    <td></td>
+                    <td
+                        style="text-align: right; padding-left: 10px; background-color: darkgray;">
+                        <span style="font-size: x-small;">Total</span><br>
+                        {{ totalBalance | formatDollar }}
+                    </td>
                     <td
                         :style="'text-align: right; padding-left: 10px; background-color:' + account.backgroundColor + ';'"
                         v-for="account in sortedAccounts">
                         <span style="font-size: x-small;">{{ account.name }}</span><br>
                         {{ account.balance | formatDollar }}
                     </td>
-                    <td
-                        style="text-align: right; padding-left: 10px; background-color: darkgray;">
-                        <span style="font-size: x-small;">Total</span><br>
-                        {{ totalBalance | formatDollar }}
-                    </td>
+
                 </tr>
                 <tr v-for="(month, i) in simulatedAmortization">
-                    <td style="text-align: right; padding-left: 10px;">{{ i+1 }}</td>
+                    <td style="text-align: right; padding-left: 10px; white-space: nowrap; background-color: darkgray;">
+                        <span style="font-size: x-small;">Month {{ i + 1 }}</span><br>
+                        {{ month.totalInterest | formatDollar }}<br>
+                        {{ month.totalPayment | formatDollar }}<br>
+                        {{ month.totalBalance | formatDollar }}
+                    </td>
                     <td v-if="account.payment < 0 || account.balance > 0"
                         :title="account.name"
-                        :style="'text-align: right; padding-left: 10px; background-color:' + account.backgroundColor + ';'"
+                        :style="'text-align: right; padding-left: 10px; white-space: nowrap; background-color:' + account.backgroundColor + ';'"
                         v-for="account in month.simulatedAccounts">
                             <span style="font-size: x-small;">{{ account.name }}</span><br>
                             {{ account.interest | formatDollar }}<br>
                             {{ account.payment | formatDollar }}<br>
                             {{ account.balance | formatDollar }}
                     </td>
-                    <td v-else></td>
-                    <td style="text-align: right; padding-left: 10px; background-color: darkgray;">
-                        <span style="font-size: x-small;">Total</span><br>
-                        {{ month.totalInterest | formatDollar }}<br>
-                        {{ month.totalPayment | formatDollar }}<br>
-                        {{ month.totalBalance | formatDollar }}
-                    </td>
+                    <!-- <td v-else></td> -->
+
                 </tr>
             </table>
 
