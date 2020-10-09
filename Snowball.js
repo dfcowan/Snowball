@@ -106,13 +106,15 @@ var model = new Vue({
             if (months < 12) {
                 desc = months + " months ";
             }
-            let years = Math.floor(months / 12);
-            let remMonths = months % 12;
-            if (remMonths === 0)            {
-                desc = months + " months (" + years + " years) ";
-            }
             else {
-                desc = months + " months (" + years + " years and " + remMonths + " months) ";
+                let years = Math.floor(months / 12);
+                let remMonths = months % 12;
+                if (remMonths === 0) {
+                    desc = months + " months (" + years + " years) ";
+                }
+                else {
+                    desc = months + " months (" + years + " years and " + remMonths + " months) ";
+                }
             }
 
             return "It will take approximately " + desc + " to payoff all your debt.";
