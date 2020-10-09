@@ -1,6 +1,6 @@
 function periodForAccount(a, p) {
     let x = { ...a };
-    x.interest = (x.balance * x.interestRate / 12);
+    x.interest = roundToPenny(x.balance * x.interestRate / 12);
     x.balance += x.interest;
     x.payment = -1*p;
     x.balance -= p;
@@ -26,7 +26,7 @@ let accounts = [{
     balance: 2209.0,
     inputBalance: "2209.0",
     interestRate: 0.2524,
-    inputInterestRate: "25.25%",
+    inputInterestRate: "25.24",
     minimumPayment: 37.0,
     inputMinimumPayment: "37.0",
     backgroundColor: "#FFFFFF"
