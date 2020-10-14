@@ -5,7 +5,8 @@
     <title>Debt Snowball Calculator</title>
 </head>
 <body style="font-family: sans-serif">
-    <h1>Debt Snowball Calculator</h1>
+    <h1>Private Debt Snowball Calculator</h1>
+    <p>All calculations take place on your own device. None of your data is sent back to any server.</p>
     <h2>Accounts</h2>
     <div id="app">
         <table>
@@ -70,10 +71,8 @@
         </table>
 
         <h2>Plan</h2>
-        <h3>
-            {{ durationDescription }}<br>
-            You will pay {{ totalPaid | formatDollar }} including {{ totalInterest | formatDollar }} of interest.
-        </h3>
+            <p>{{ durationDescription }}</p>
+            <p>You will pay approximately {{ totalPaid | formatDollar }} including {{ totalInterest | formatDollar }} of interest.</p>
             <table>
                 <tr>
                     <td style="text-align: right;">
@@ -86,10 +85,9 @@
                         <u style="font-size: large;">{{ account.name }}</u><br>
                         {{ account.balance | formatDollar }}
                     </td>
-
                 </tr>
                 <tr v-for="(month, i) in simulatedAmortization">
-                    <td style="text-align: right; padding-left: 10px; white-space: nowrap; background-color: darkgray;">
+                    <td style="text-align: right; padding-left: 10px; white-space: nowrap;">
                         <u style="font-size: large;">Month {{ i + 1 }}</u><br>
                         {{ month.totalInterest | formatDollar }}<br>
                         {{ month.totalPayment | formatDollar }}<br>
@@ -104,7 +102,12 @@
                             {{ account.payment | formatDollar }}<br>
                             {{ account.balance | formatDollar }}
                     </td>
-                    <!-- <td v-else></td> -->
+                    <td v-if="i === 0" style="white-space: nowrap;">
+                        <br>
+                        (interest)<br>
+                        (payment)<br>
+                        (new balance)
+                    </td>
 
                 </tr>
             </table>
