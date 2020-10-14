@@ -19,17 +19,17 @@ function roundToPenny(x) {
 }
 
 let monthlyBudget = 1000;
-let inputMonthlyBudget = "1000.0";
+let inputMonthlyBudget = "1000.00";
 let accounts = [{
     id: uuidv4(),
     name: "Example",
     balance: 2209.0,
-    inputBalance: "2209.0",
+    inputBalance: "2209.00",
     interestRate: 0.2524,
     inputInterestRate: "25.24",
     minimumPayment: 37.0,
-    inputMinimumPayment: "37.0",
-    backgroundColor: "#FFFFFF"
+    inputMinimumPayment: "37.00",
+    backgroundColor: "#BBBBFF"
 }];
 
 function loadFromLocalStorage() {
@@ -79,6 +79,9 @@ var model = new Vue({
     },
     methods: {
         addAccount: function () {
+            let color = "#" + Math.floor(100 + Math.random() * 155).toString(16) +
+                Math.floor(100 + Math.random() * 155).toString(16) +
+                Math.floor(100 + Math.random() * 155).toString(16);
             this.accounts.push({
                 id: uuidv4(),
                 name: "New Account",
@@ -88,7 +91,7 @@ var model = new Vue({
                 interestRate: 0,
                 inputMinimumPayment: "0.0",
                 minimumPayment: 0,
-                backgroundColor: "#FFFFFF"
+                backgroundColor: color
             });
         },
         removeAccount: function (id) {
