@@ -22,14 +22,24 @@ let monthlyBudget = 1000;
 let inputMonthlyBudget = "1000.00";
 let accounts = [{
     id: uuidv4(),
-    name: "Example",
-    balance: 2209.0,
-    inputBalance: "2209.00",
+    name: "Example 1",
+    balance: 1002.0,
+    inputBalance: "1002.00",
     interestRate: 0.2524,
     inputInterestRate: "25.24",
     minimumPayment: 37.0,
     inputMinimumPayment: "37.00",
     backgroundColor: "#BBBBFF"
+},{
+    id: uuidv4(),
+    name: "Example 2",
+    balance: 1209.0,
+    inputBalance: "1209.00",
+    interestRate: 0.1524,
+    inputInterestRate: "15.24",
+    minimumPayment: 107.0,
+    inputMinimumPayment: "107.00",
+    backgroundColor: "#11BBFF"
 }];
 
 function loadFromLocalStorage() {
