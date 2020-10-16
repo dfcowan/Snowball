@@ -6,7 +6,11 @@
 </head>
 <body style="font-family: sans-serif">
     <h1>Private Debt Snowball Calculator</h1>
-    <p>All calculations take place on your own device. None of your data is sent back to any server.</p>
+    <p style="max-width: 500px;">All calculations take place on your own device. None of your data is sent back to any server.</p>
+    <p style="max-width: 500px;">
+        This tool can be used to make a plan to payoff debt using Dave Ramsey's debt snowball method. 
+        The way it works is similar to a loan amortization schedule for a single account, but allows you to build a plan for all of your accounts at the same time.
+    </p>
     <h2>Accounts</h2>
     <div id="app">
         <table>
@@ -44,7 +48,7 @@
         <table>
             <tr>
                 <td>
-                    Monthly Budget:
+                    Monthly Debt Budget:
                 </td>
                 <td>
                     <input type="number" v-model="inputMonthlyBudget" style="width: 75px;">
@@ -85,6 +89,10 @@
                         <u style="font-size: large;">{{ account.name }}</u><br>
                         {{ account.balance | formatDollar }}
                     </td>
+                    <td>
+                        <br>
+                        (starting balance)
+                    </td>
                 </tr>
                 <tr v-for="(month, i) in simulatedAmortization">
                     <td style="text-align: right; padding-left: 10px; white-space: nowrap;">
@@ -99,8 +107,11 @@
                         v-for="account in month.simulatedAccounts">
                             <u style="font-size: large;">{{ account.name }}</u><br>
                             {{ account.interest | formatDollar }}<br>
-                            {{ account.payment | formatDollar }}<br>
-                            {{ account.balance | formatDollar }}
+                            
+                            <span v-if="-1 * account.payment > account.minimumPayment" title="Snowball Payment"><b>{{ account.payment | formatDollar }}</b><br></span>
+                            <span v-else>{{ account.payment | formatDollar }}<br></span>
+
+                            <span v-if="account.balance <= 0">&#9989;&nbsp;&#127881;&nbsp;</span>{{ account.balance | formatDollar }}
                     </td>
                     <td v-if="i === 0" style="white-space: nowrap;">
                         <br>
@@ -112,6 +123,9 @@
                 </tr>
             </table>
 
+            <p style="font-size: small;">
+                Created by <a href="https://github.com/dfcowan/Snowball">Drew Cowan</a> &copy;&nbsp;2020
+            </p>
 
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
