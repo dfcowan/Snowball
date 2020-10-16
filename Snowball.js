@@ -42,14 +42,6 @@ let accounts = [{
     backgroundColor: "#11BBFF"
 }];
 
-function trackVisitViaGithub() {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://github.com/dfcowan/Snowball', true);
-    xhr.send(null);
-}
-
-trackVisitViaGithub();
-
 function loadFromLocalStorage() {
     let mb = parseFloat(localStorage.getItem('inputMonthlyBudget'));
     if (mb) {
